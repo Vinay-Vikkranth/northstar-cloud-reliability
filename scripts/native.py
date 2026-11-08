@@ -52,6 +52,7 @@ def ready(url: str, process: subprocess.Popen, seconds: int=45):
     raise RuntimeError(f"Health timeout: {url}")
 
 def prepare(env: dict):
+    run(["scripts/preflight.py"],env)
     run(["scripts/local_postgres.py"],env)
     run(["-m","alembic","upgrade","head"],env)
     run(["scripts/apply_grants.py"],env)
