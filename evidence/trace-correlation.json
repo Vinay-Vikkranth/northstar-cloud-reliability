@@ -1,0 +1,229 @@
+{
+  "measured_at": "2026-11-08T19:08:05.573212+00:00",
+  "scope": "Actual localhost synthetic workflow; no customer or production trace",
+  "services": [
+    "api",
+    "worker",
+    "crm",
+    "support"
+  ],
+  "trace_ids_observed_across_all_four_services": 18,
+  "example_trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+  "matching_log_records_by_service": {
+    "api": 1,
+    "worker": 8,
+    "crm": 2,
+    "support": 2
+  },
+  "spans": {
+    "api": [
+      {
+        "name": "fastapi.dependencies",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "15a79b7b67db7acf",
+        "parent_span_id": "768a9dd756169777",
+        "status": "UNSET",
+        "duration_ms": 6.5137
+      },
+      {
+        "name": "fastapi.endpoint",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "10d4c5fed72cb3c7",
+        "parent_span_id": "768a9dd756169777",
+        "status": "UNSET",
+        "duration_ms": 9.0354
+      },
+      {
+        "name": "fastapi.serialization",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "9410c1cf3d4ea49b",
+        "parent_span_id": "768a9dd756169777",
+        "status": "UNSET",
+        "duration_ms": 0.0
+      },
+      {
+        "name": "POST /api/v1/incidents/43c3fa83-f88b-4d1e-95f9-848a4ad63b2b/investigate",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "768a9dd756169777",
+        "parent_span_id": null,
+        "status": "UNSET",
+        "duration_ms": 17.0582
+      }
+    ],
+    "worker": [
+      {
+        "name": "worker.investigate",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "3592bbcb8005c429",
+        "parent_span_id": "10d4c5fed72cb3c7",
+        "status": "UNSET",
+        "duration_ms": 325.7798
+      }
+    ],
+    "crm": [
+      {
+        "name": "fastapi.dependencies",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "66cab0b999897c34",
+        "parent_span_id": "6c4af73cf92d6b9a",
+        "status": "UNSET",
+        "duration_ms": 1.0012
+      },
+      {
+        "name": "fastapi.endpoint",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "2bd2f98a2ee6004f",
+        "parent_span_id": "6c4af73cf92d6b9a",
+        "status": "UNSET",
+        "duration_ms": 2.1068
+      },
+      {
+        "name": "fastapi.serialization",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "2b041dcf8e0aa04e",
+        "parent_span_id": "6c4af73cf92d6b9a",
+        "status": "UNSET",
+        "duration_ms": 0.0
+      },
+      {
+        "name": "northstar-crm-simulator.GET",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "6c4af73cf92d6b9a",
+        "parent_span_id": "3592bbcb8005c429",
+        "status": "UNSET",
+        "duration_ms": 4.6135
+      },
+      {
+        "name": "GET /v1/customers/{customer_id}",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "250e41862d0798a4",
+        "parent_span_id": "3592bbcb8005c429",
+        "status": "UNSET",
+        "duration_ms": 5.9144
+      },
+      {
+        "name": "fastapi.dependencies",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "70f5ce02ff1a0eb1",
+        "parent_span_id": "17180692e0395778",
+        "status": "UNSET",
+        "duration_ms": 0.9994
+      },
+      {
+        "name": "fastapi.endpoint",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "567d98fc33535930",
+        "parent_span_id": "17180692e0395778",
+        "status": "UNSET",
+        "duration_ms": 2.9988
+      },
+      {
+        "name": "fastapi.serialization",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "2672c7c5238da089",
+        "parent_span_id": "17180692e0395778",
+        "status": "UNSET",
+        "duration_ms": 1.0013
+      },
+      {
+        "name": "northstar-crm-simulator.GET",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "17180692e0395778",
+        "parent_span_id": "3592bbcb8005c429",
+        "status": "UNSET",
+        "duration_ms": 4.9995
+      },
+      {
+        "name": "GET /v1/customers/{customer_id}",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "2d0e07b40c57c579",
+        "parent_span_id": "3592bbcb8005c429",
+        "status": "UNSET",
+        "duration_ms": 4.9995
+      }
+    ],
+    "support": [
+      {
+        "name": "fastapi.dependencies",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "aaf3f5d14ec1f78c",
+        "parent_span_id": "3716d9d60a510e4a",
+        "status": "UNSET",
+        "duration_ms": 0.0
+      },
+      {
+        "name": "fastapi.endpoint",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "545c44372449410c",
+        "parent_span_id": "3716d9d60a510e4a",
+        "status": "UNSET",
+        "duration_ms": 3.0228
+      },
+      {
+        "name": "fastapi.serialization",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "edc373abd0c6f67a",
+        "parent_span_id": "3716d9d60a510e4a",
+        "status": "UNSET",
+        "duration_ms": 1.5089
+      },
+      {
+        "name": "northstar-support-simulator.GET",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "3716d9d60a510e4a",
+        "parent_span_id": "3592bbcb8005c429",
+        "status": "UNSET",
+        "duration_ms": 4.5317
+      },
+      {
+        "name": "GET /v1/accounts/{account_id}",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "f4b40d34fb2852de",
+        "parent_span_id": "3592bbcb8005c429",
+        "status": "UNSET",
+        "duration_ms": 5.5397
+      },
+      {
+        "name": "fastapi.dependencies",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "89e3f1f0565ee917",
+        "parent_span_id": "e216e747e844bcf7",
+        "status": "UNSET",
+        "duration_ms": 0.9997
+      },
+      {
+        "name": "fastapi.endpoint",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "8f4d7bed8c71a470",
+        "parent_span_id": "e216e747e844bcf7",
+        "status": "UNSET",
+        "duration_ms": 2.0014
+      },
+      {
+        "name": "fastapi.serialization",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "7140507a64c3c523",
+        "parent_span_id": "e216e747e844bcf7",
+        "status": "UNSET",
+        "duration_ms": 0.0
+      },
+      {
+        "name": "northstar-support-simulator.GET",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "e216e747e844bcf7",
+        "parent_span_id": "3592bbcb8005c429",
+        "status": "UNSET",
+        "duration_ms": 3.0011
+      },
+      {
+        "name": "GET /v1/accounts/{account_id}",
+        "trace_id": "0183e52015aeab6d9b4bdb4afb29e6df",
+        "span_id": "32456b01c2123600",
+        "parent_span_id": "3592bbcb8005c429",
+        "status": "UNSET",
+        "duration_ms": 5.001
+      }
+    ]
+  },
+  "privacy": "No bodies, notes, credentials, workspace IDs, account IDs or raw log messages included."
+}

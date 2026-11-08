@@ -1,0 +1,51 @@
+{
+  "verified_on": "2026-11-08 America/Phoenix",
+  "python": "3.12.9",
+  "tests": {
+    "command": "python -B scripts/native.py test",
+    "passed": 109,
+    "failed": 0,
+    "warnings": 3,
+    "duration_seconds": 63.35,
+    "database": "PostgreSQL16 on isolated55438; separate cir_test/crm_test/support_test andHTTP28711/28721"
+  },
+  "frontend": {
+    "commands": [
+      "npm ci",
+      "npm run build"
+    ],
+    "passed": true,
+    "npm_reported_vulnerabilities": 0
+  },
+  "native_demo": {
+    "ready": true,
+    "origin": "http://127.0.0.1:28601",
+    "source_and_original_db_untouched": true
+  },
+  "original_file_hashes": {
+    "checked": 125,
+    "changed": []
+  },
+  "runtime_lock_comparison": {
+    "mismatches": []
+  },
+  "failure_proofs": [
+    "owned child terminated after durableclaim; freshlease reclaimed",
+    "stale UUID cannotrenew orfinish",
+    "lostlease beforedestinationdispatch startsnowrite",
+    "inherited crash-after-commit receipt recovery",
+    "incomingtrace persists inDBjob andworkerlog",
+    "productionselfapproval denied evenforadministrator",
+    "boundeddeadletterreplayaudited",
+    "release tamperdetection andfilesystemactivation/rollback"
+  ],
+  "container_execution": "not locally executed; no Docker installed. Inspect actual GitHub Actions result before claiming container validation.",
+  "cloud_deployment": "not activated; no resources, bill, provider or production availability established",
+  "attribution": "70 initial tests and existing recovery/policy stack inherited; implementation AI assisted",
+  "privacy_review": {
+    "real_hubspot_identifiers_removed": true,
+    "legacy_documents_marked_historical": true
+  },
+  "actual_trace_correlation": "evidence/trace-correlation.json",
+  "benchmark": "evidence/benchmark.json"
+}

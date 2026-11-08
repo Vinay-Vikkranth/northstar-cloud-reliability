@@ -1,0 +1,130 @@
+name: ci
+
+permissions:
+  contents: read
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 55432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 20
+    env:
+      PYTHONPATH: apps/api:apps/worker:services/crm_simulator:services/support_service:packages/recovery_core:evaluations
+      CIR_ADMIN_URL: postgresql://postgres:postgres@127.0.0.1:55432/postgres
+      CIR_DATABASE_URL: postgresql+psycopg://cir_app:cir_app_local@127.0.0.1:55432/cir
+      CIR_MIGRATION_DATABASE_URL: postgresql+psycopg://cir_owner:cir_owner_local@127.0.0.1:55432/cir
+      CRM_DATABASE_URL: postgresql+psycopg://crm_app:crm_app_local@127.0.0.1:55432/crm
+      SUPPORT_DATABASE_URL: postgresql+psycopg://support_app:support_app_local@127.0.0.1:55432/support
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Install Python dependencies
+        run: pip install -r requirements.lock
+      - name: Create local roles
+        run: python scripts/ensure_roles.py
+      - name: Migrate and grant
+        run: |
+          python -m alembic upgrade head
+          python scripts/apply_grants.py
+          python scripts/setup_checkpoints.py
+      - name: Test
+        run: python -m pytest tests/unit tests/integration -q --junitxml=var/test-results.xml
+      - name: Build the web app
+        working-directory: apps/web
+        run: |
+          npm ci
+          npm run build
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: unit-integration-results
+          path: var/test-results.xml
+
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install benchmark client
+        run: python -m pip install httpx==0.28.1
+      - name: Check the compose file
+        run: docker compose config
+      - name: Boot and probe health
+        run: |
+          docker compose up -d --build
+          python - <<'PY'
+          import time, urllib.request
+          deadline = time.time() + 180
+          last = ""
+          while time.time() < deadline:
+              try:
+                  with urllib.request.urlopen("http://127.0.0.1:8101/health/ready", timeout=3) as response:
+                      if response.status == 200:
+                          print("api ready")
+                          raise SystemExit(0)
+              except Exception as exc:
+                  last = str(exc)
+                  time.sleep(3)
+          raise SystemExit("api did not become ready: " + last)
+          PY
+      - name: Verify seeding and exercise real HTTP approval workflow
+        run: |
+          docker compose wait bootstrap
+          mkdir -p var
+          docker compose cp bootstrap:/app/var/local-credentials.json var/container-credentials.json
+          python scripts/benchmark.py --allow-reset --base-url http://127.0.0.1:8101 --crm-url http://127.0.0.1:8111 --support-url http://127.0.0.1:8121 --credentials var/container-credentials.json --cases 3 --requests 20 --concurrency 2 --output evidence/container-benchmark.json
+      - name: Check production composition and build hardened image
+        run: |
+          python scripts/release.py init-env --domain northstar.example.com --email operator@example.com
+          docker compose --env-file var/cloud/production.env -f compose.production.yaml config --quiet
+          docker build -f Dockerfile.production -t northstar-cloud:ci .
+      - name: Boot hardened production stack without public edge
+        run: |
+          NORTHSTAR_IMAGE=northstar-cloud:ci docker compose -p northstar-prod-ci --env-file var/cloud/production.env -f compose.production.yaml up -d --no-build --wait --wait-timeout 180 api worker
+          NORTHSTAR_IMAGE=northstar-cloud:ci docker compose -p northstar-prod-ci --env-file var/cloud/production.env -f compose.production.yaml exec -T api python deploy/smoke.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: container-benchmark
+          path: |
+            evidence/container-benchmark.json
+            evidence/container-benchmark.svg
+      - name: Container diagnostics on failure
+        if: failure()
+        run: |
+          docker compose logs --tail 80
+          if [ -f var/cloud/production.env ]; then
+            NORTHSTAR_IMAGE=northstar-cloud:ci docker compose -p northstar-prod-ci --env-file var/cloud/production.env -f compose.production.yaml logs --tail 80
+          fi
+      - name: Stop this production CI stack
+        if: always()
+        run: |
+          if [ -f var/cloud/production.env ]; then
+            NORTHSTAR_IMAGE=northstar-cloud:ci docker compose -p northstar-prod-ci --env-file var/cloud/production.env -f compose.production.yaml down --volumes
+          fi
+      - name: Stop this CI stack
+        if: always()
+        run: docker compose down --volumes

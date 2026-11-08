@@ -1,0 +1,161 @@
+INDEPENDENT REVIEW — Northstar Recovery
+Reviewed November 2, 2026. Review only; application code was not changed.
+
+VERDICT
+Useful deterministic recovery prototype with real implementation of separate HTTP
+services, PostgreSQL domain records, approval hashes, conditional writes and receipts.
+Not yet the complete AI/FDE flagship described in BUILD_SPEC.md. Fix the items below
+before presenting it as a completed AI investigation and reliable recovery system.
+
+INDEPENDENT CHECKS
+- python -m pytest tests/unit -q: 15 passed.
+- npm run build in apps/web: TypeScript and Vite production build passed.
+- Full unit/integration command: 15 passed, 11 integration setup errors because port
+  8111 was already occupied. Existing application processes were not stopped.
+  This is a test-environment blocker, not evidence all 11 workflows are broken.
+- In-memory probe of _live_agent with two synthetic evidence IDs and different plan
+  values: the model was called but neither ID nor either plan value was passed in
+  its messages. No paid model call or external CRM call was made.
+- Source review of executor, jobs/worker, routes, adapters, datasets, Compose and CI.
+- No independent browser workflow, Docker boot, live CRM or live LLM verification.
+- Existing validation docs correctly disclose multiple live verification gaps.
+
+FINDINGS AND REQUIRED CHANGES
+
+1. P1 — AI investigator does not receive evidence or select tools
+Location: apps/api/recovery_api/investigate.py:233–295 and llm.py.
+_live_agent collects observations, but sends messages saying only that a tool
+returned data. It never serializes the observations into the model conversation.
+The tool sequence is hard-coded; there is no model tool-request protocol. Final
+diagnosis comes from diagnose(), with the model result added as a hypothesis.
+The system prompt also does not provide the actual allowed enum values/schema.
+This blocks the project's central claim of evidence-based agent investigation.
+Required: supply scoped redacted observations/evidence IDs and actual schemas;
+implement bounded model-selected read-tool requests, validate arguments/citations,
+and preserve an independent deterministic authorization/repair policy. Persist
+the actual model's evidence-grounded explanation without allowing arbitrary writes.
+Tests: inspect exact provider payload with a fake provider, assert evidence is
+present, demonstrate different tool choices across incidents, reject arbitrary
+tools/wrong-workspace arguments, invalid citations and injection attempts.
+Also handle provider timeouts/transport/429/5xx/malformed responses, aggregate usage
+across calls and enforce elapsed-time/token/cost limits. Currently only tool-call
+count and individual HTTP timeout are exposed, and usage is overwritten per call.
+
+2. P1 — Successful writes can become stranded during verification/restart
+Location: execute.py:89,195,284 and main.py worker:36–41.
+The executor commits SUCCEEDED then changes to RECONCILING and commits before
+reading verification evidence. The recovery scan only includes DISPATCHING and
+OUTCOME_UNKNOWN. execute_intent has no ordinary continuation path for SUCCEEDED or
+RECONCILING when a usable receipt is not available. If the process dies or the
+verification read fails, recovery is incomplete. Recovery receipt lookup is also
+behind proposal expiry, so an already-committed operation can be marked failed
+after expiry instead of reconciled.
+Required: a durable verification-only continuation for committed/uncertain writes;
+include all recoverable states; reconcile existing receipts independently of new-
+write authorization expiry. Never issue another write merely to verify one.
+Tests: crash after SUCCEEDED commit; crash after RECONCILING commit; destination
+write succeeds then CRM verification goes down; restart after proposal expiry.
+Assert eventual verified/escalated outcome, one mutation, and an accurate audit.
+
+3. P1 — Cancelled/superseded/rejected proposals remain executable
+Location: routes.py:326–340,402 onward; execute.py:145 onward.
+Cancel changes run/incident state, but _decide does not require an active matching
+AWAITING_APPROVAL investigation. It accepts an unexpired hash without checking
+whether that proposal was cancelled/superseded. Rejection is not checked as a
+terminal decision. An existing approval can also be rejected while its original
+approved intent remains executable. Executor checks approval/hash but not the
+proposal's current lifecycle/active investigation.
+Required: explicit immutable lifecycle/decision state, active-proposal validation,
+atomic decision locking/constraints and executor-side revalidation before dispatch.
+Define what cancellation means after dispatch; never pretend an external write
+was cancelled if it may already have committed.
+Tests: cancel then approve old proposal; start new investigation then approve old
+proposal; reject then approve; reject after approval; concurrent approve/reject;
+cancellation races with job claim. Assert no forbidden write and coherent history.
+
+4. P2 — Retry limit resets by creating a fresh job every time
+Location: execute.py:292–315; jobs.py:20,31.
+429/5xx handlers enqueue a NEW job with attempts=0. Its max_attempts does not cap
+the chain of successor jobs. Retries can continue until another condition such as
+proposal expiry stops them. The outer retry delay is a fixed two seconds; the
+HTTP helper's Retry-After behavior does not bound the durable chain.
+Required: persist a total attempt/deadline budget on the repair intent, or reschedule
+one job without resetting attempts. Respect Retry-After with a documented cap,
+backoff and final escalation. Test a permanently rate-limited/unavailable service.
+
+5. P1 for packaging — Docker web proxy points to itself
+Location: apps/web/vite.config.ts:11,20; compose.yaml web service.
+Inside the web container, 127.0.0.1:8101 means that same container, not the API
+container. Compose supplies no alternative proxy target. The page may load while
+login and all API calls fail. Docker was not available for runtime verification.
+Required: configurable proxy target (http://api:8101 in Compose; localhost native)
+or a proper production reverse proxy. Add health/readiness ordering and an explicit
+bootstrap/seed/runbook-load procedure for a fresh Compose volume. Verify actual
+clean-volume container login/investigation/approval/repair, not just image build.
+Bind synthetic admin-service/DB host ports to loopback and document demo-only
+credentials; current short port mappings expose them on all host interfaces.
+
+6. P1 for CI — Linux workflow cannot use Windows-only test paths
+Location: tests/integration/conftest.py:12,15 and test_safety.py:21,278,334;
+.github/workflows/ci.yml:39–43.
+Ubuntu CI installs with pip but test subprocesses require .venv/Scripts/python.exe
+and join PYTHONPATH with semicolons. Crash tests repeat those assumptions. CI also
+runs ensure_roles.py (imports psycopg) before installing requirements.
+Required: use sys.executable and os.pathsep, install dependencies before DB setup,
+and configure test URLs/ports without modifying a running demo. CI must run database,
+HTTP and browser tests plus container smoke, with no provider/paid calls by default.
+Do not claim the current workflow passed until an actual run is observed.
+
+7. P2 — Evaluation comparison is not implemented
+Location: evaluations/run_baseline.py:67 onward; generate_dataset.py:1 onward.
+Only the deterministic scorer runs. live_pending() returns a constant placeholder;
+there are no executable single-pass and tool-agent evaluation runners. Development
+and evaluation sets share the same causal templates and vary mainly plan pairs/
+revisions. 39/39 is policy consistency, not evidence of AI usefulness/generalization.
+Required: actual three-approach runners with injectable fake provider contract
+tests and explicit opt-in live calls; freeze a more varied evaluation set with
+split provenance; common success criteria; record failures, latency, usage and
+cost honestly. Test citation support, not merely whether an ID exists. Report
+baseline wins and uncertainty rather than forcing an AI improvement claim.
+
+8. P2 — Job lease lacks renewal/fencing for long investigations
+Location: jobs.py:57; recovery_worker/main.py:process_available_jobs.
+Jobs get a 30-second lease, but no heartbeat renews it while running. Live calls
+can last 30 seconds each and the investigation can make multiple calls. A second
+worker may reclaim it, and finish_job does not check current lease ownership.
+Required: renew leases or choose a bounded execution scheme, enforce owner/fencing
+checks on finish, make investigation conclusion/proposal persistence retry-safe,
+and close recovery sessions created inside the repair loop.
+Tests: two workers, task longer than one lease, stale worker finish and duplicate
+investigation delivery. Assert one active conclusion/proposal and coherent state.
+
+SECONDARY GAPS TO CHECK DURING FIXES
+- Connector health tool probes configured demo origins even for a HubSpot source;
+  report actual selected connector health and authentication state.
+- HubSpot read caller does not close its client and does not translate transport
+  exceptions into evidence/escalation. Add tests for unavailable external network.
+- Trace-read endpoint reads a shared trace file without workspace filtering.
+  Restrict it to a genuine global-admin capability or scope telemetry by workspace.
+- Simulator services use shared fixed customer IDs/admin resets. Do not claim
+  end-to-end tenant isolation solely from application-row checks; prove connector-
+  side separation or state the synthetic service boundary explicitly.
+- Runbook fallback/search behavior and actual model citation support need tests.
+- Do not implement real account writes, paid calls or public hosting without
+  Vinay's authorization and clearly configured test accounts/budgets.
+
+FIX SEQUENCE FOR CURSOR
+First preserve the current work and inspect this review against the code. Add
+failing regression tests for findings 1–4 and 8; fix the behavior. Fix CI/container
+setup and run the full isolated suite, browser flow and clean-install smoke.
+Implement real evaluation runners. Update docs/VALIDATION.md with actual observed
+results, separating offline, real CRM, live model, practitioner and hosting status.
+Do not edit the frozen evaluation labels to make results look better. Do not alter
+the existing ResolveDesk project or stop unrelated services to make tests pass.
+
+INTERVIEW POSITIONING NOW
+Defensible: deterministic synthetic recovery prototype, Python/FastAPI, React/
+TypeScript, PostgreSQL, reviewed proposals, conditional writes and idempotency
+receipt mechanisms (with the recovery limitations above).
+Not yet defensible: effective autonomous AI investigator, independently verified
+production reliability, validated live HubSpot integration, model-quality uplift,
+customer adoption/business savings or a fully completed flagship FDE project.

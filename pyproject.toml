@@ -1,0 +1,50 @@
+[project]
+name = "customer-integration-recovery"
+version = "0.1.0"
+description = "Investigate and safely repair a failed customer plan sync."
+requires-python = ">=3.12"
+dependencies = [
+  "fastapi>=0.115,<1",
+  "uvicorn[standard]>=0.32,<1",
+  "pydantic>=2.10,<3",
+  "pydantic-settings>=2.6,<3",
+  "sqlalchemy>=2.0.36,<3",
+  "alembic>=1.14,<2",
+  "psycopg[binary]>=3.2,<4",
+  "httpx>=0.28,<1",
+  "langgraph>=1.0,<1.1",
+  "langgraph-checkpoint-postgres>=2.0,<3",
+  "opentelemetry-sdk>=1.28,<2",
+  "opentelemetry-exporter-otlp-proto-http>=1.28,<2",
+  "opentelemetry-instrumentation-fastapi>=0.49b0",
+  "argon2-cffi>=23.1,<26",
+  "pgserver>=0.1.4",
+  "psutil>=7,<8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.3,<9", "pytest-asyncio>=0.24,<1", "jsonschema>=4.23,<5"]
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "apps/api",
+  "apps/worker",
+  "services/crm_simulator",
+  "services/support_service",
+  "packages/recovery_core",
+  "evaluations",
+]
+testpaths = ["tests"]
+markers = [
+  "integration: tests that need PostgreSQL and the HTTP services",
+]
+
+[tool.setuptools.package-dir]
+recovery_api = "apps/api/recovery_api"
+recovery_worker = "apps/worker/recovery_worker"
+crm_simulator = "services/crm_simulator/crm_simulator"
+support_service = "services/support_service/support_service"
+recovery_core = "packages/recovery_core/recovery_core"
+
+[tool.setuptools]
+packages = ["recovery_api", "recovery_worker", "crm_simulator", "support_service", "recovery_core"]

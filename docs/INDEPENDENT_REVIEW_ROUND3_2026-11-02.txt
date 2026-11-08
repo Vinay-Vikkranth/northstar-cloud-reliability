@@ -1,0 +1,67 @@
+NORTHSTAR RECOVERY — INDEPENDENT REVIEW ROUND 3
+November 2, 2026. Application code unchanged in this review.
+
+RESULT
+61 unit/integration tests passed, 3 deprecation warnings, 55.41 seconds.
+Frontend TypeScript check and Vite production build passed, 1.29 seconds.
+The original three independent round-2 assertions remain present and now pass.
+Added cancellation-during-tool and superseded queued-run checks also pass.
+
+CONFIRMED IMPROVEMENTS
+- Cancelled/obsolete runs checked at start, between graph steps and before publishing.
+- Retrieved runbook content now reaches the model as bounded untrusted documents.
+- Usage/time checks now run after a model response, including the final response;
+  provider output limits and remaining request timeout are supplied.
+- Explicit --live evaluation path constructs a provider adapter and executes both
+  approaches, with fake-provider wiring tests; default command remains offline.
+- Evaluation tool path now starts without full customer evidence and reveals
+  observations through tools. This fixes the earlier automatic evidence disclosure.
+
+ONE REMAINING LIVE-MODE COMPATIBILITY ISSUE — P2
+Source: apps/api/recovery_api/agent.py:run_model_loop / _usage_add;
+apps/api/recovery_api/investigate.py:_live_agent;
+evaluations/runners.py:tool_agent / run_live_evaluation;
+docs/INTEGRATIONS.md:local model instructions.
+
+The agent always has a dollar-cost ceiling, but the provider adapter records a
+price only if the response supplies cost_usd. A provider without that price yields
+cost_known=false. App live mode has no configured allow_unknown_cost policy, and
+live evaluation explicitly disables it. Both therefore stop after the first
+provider call with cost_unknown, before even executing the requested read tool.
+This is intentional conservative behavior, not a silent unsafe write, but it makes
+the documented local-model setup unusable for a complete investigation when the
+server omits price. It also affects hosted responses that omit price.
+
+Independent controlled probe (no network/model calls): response requested
+get_source_customer, reported30tokens and cost_usd=None. Observed provider_calls1,
+error budget_exhausted, reason cost_unknown, tools_executed0.
+
+Required before a live-model demo:
+- Define and document a provider-specific cost policy consistently in app and eval.
+- For a configured local server, explicitly opt into unknown monetary cost while
+  retaining hard tool/time and response-token constraints; label compute cost
+  unmeasured, not automatically zero.
+- For hosted models, prefer explicit configured input/output rates and a recorded
+  conservative estimate, separately labeled from provider-supplied charges.
+- Never silently call missing cost zero. Unsupported accounting should explain
+  what to configure, and should continue to stop under the strict policy.
+- Test missing-price live app and evaluation behavior with fake provider responses;
+  test strict unknown-cost rejection, estimated-cost accounting and override scope.
+- No paid calls or credential/account changes without Vinay's authorization.
+
+REMAINING VALIDATION, NOT MORE GENERAL REWRITING
+The current local API process predates these code changes, per Cursor's validation
+record. Restart this project's stack when Vinay is ready, then verify the full
+browser workflow against the updated process. This review did not stop/reset it.
+No new browser pass against the latest API is claimed.
+
+Real HubSpot reads, actual model quality, clean-volume container boot, Linux CI,
+practitioner feedback and public hosting remain unverified/pending as documented.
+Source/contract tests cannot substitute for these checks. The latest code is a
+substantially improved tested offline prototype; it is not yet a validated live
+customer AI deployment.
+
+NEXT ACTION
+Resolve the small cost-policy compatibility gap. Then prioritize actual model/test-
+CRM verification and a demonstration on the latest process, rather than adding
+frameworks. Re-run affected tests after the fix; report actual measured results.

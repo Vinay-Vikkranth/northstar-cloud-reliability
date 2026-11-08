@@ -1,0 +1,28 @@
+{
+    email {$ACME_EMAIL}
+    admin off
+}
+
+{$NORTHSTAR_DOMAIN} {
+    encode zstd gzip
+    header {
+        Strict-Transport-Security "max-age=31536000"
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy no-referrer
+        Permissions-Policy "camera=(), microphone=(), geolocation=()"
+        -Server
+    }
+    request_body {
+        max_size 64KB
+    }
+    @internal path /metrics /metrics/* /health/* /api/v1/events/* /docs /docs/* /redoc /openapi.json
+    respond @internal 404
+    handle /healthz {
+        rewrite * /health/ready
+        reverse_proxy api:8101
+    }
+    handle {
+        reverse_proxy api:8101
+    }
+}

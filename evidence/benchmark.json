@@ -1,0 +1,74 @@
+{
+  "measured_at": "2026-11-08T19:06:46.176508+00:00",
+  "data": "fictional Northstar simulator only",
+  "cases": 8,
+  "scripted_direct_protocol": {
+    "samples": 8,
+    "p50_ms": 76.858,
+    "p95_ms": 101.446,
+    "mean_ms": 82.204,
+    "min_ms": 66.972,
+    "max_ms": 107.264
+  },
+  "application_workflow": {
+    "samples": 8,
+    "p50_ms": 1989.666,
+    "p95_ms": 2560.044,
+    "mean_ms": 2069.589,
+    "min_ms": 1768.738,
+    "max_ms": 2804.624
+  },
+  "health_load": {
+    "samples": 100,
+    "p50_ms": 25.831,
+    "p95_ms": 53.193,
+    "mean_ms": 30.426,
+    "min_ms": 15.534,
+    "max_ms": 66.276,
+    "concurrency": 4,
+    "failures": 0,
+    "requests_per_second": 130.225
+  },
+  "verified_destination_writes_per_automated_case": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "operations": {
+    "as_of": "2026-11-08T19:06:46.200553+00:00",
+    "scope": "recorded non-maintenance jobs in the selected workspace",
+    "maintenance_jobs_excluded": 91,
+    "counts": {
+      "done": 18
+    },
+    "terminal_jobs": 18,
+    "duration_samples": 18,
+    "completion_rate": 1.0,
+    "p50_ms": 257.057,
+    "p95_ms": 626.863,
+    "expired_leases": 0,
+    "alerts": [],
+    "slo": {
+      "success_target": 0.99,
+      "p95_target_ms": 5000,
+      "minimum_samples": 10,
+      "status": "within_objective"
+    },
+    "limits": "Portfolio demo objective, not a production SLA. Duration is the last successful execution per job, excluding approval wait. Terminal success is done / (done + dead), not per-attempt availability.",
+    "repair_states": {
+      "VERIFIED": 9
+    }
+  },
+  "cost": {
+    "paid_api_calls": 0,
+    "cloud_bill_usd": null,
+    "cloud_bill_status": "not deployed or measured",
+    "local_electricity_cost_usd": null
+  },
+  "methodology": "Both task timings are executed scripts over real localhost HTTP. Direct protocol reads CRM and support, compares, writes once and verifies. Application includes investigation worker, approval by a separately authenticated scripted approver, execution and 50ms status polling. No human think time, labor saving, causal business benefit or production-load claim. Fresh HTTP clients add connection overhead. Health load covers readiness requests, not a sustained production throughput benchmark."
+}

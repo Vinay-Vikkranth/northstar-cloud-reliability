@@ -1,0 +1,108 @@
+NORTHSTAR RECOVERY — INDEPENDENT REVIEW, ROUND 2
+November 2, 2026. Application code not changed. Three regression probes added.
+
+VERDICT
+Substantial improvement. Previously missing evidence payloads, dynamic read-tool
+requests, committed-write recovery, decision lifecycle checks, durable retry count,
+container proxy configuration and portable test subprocesses are implemented.
+The existing suite is green, but additional review probes expose remaining gaps.
+
+VERIFIED IN THIS REVIEW
+- Existing unit/integration suite: 51 passed, 3 deprecation warnings, 51.34s.
+  Isolated cir_test/crm_test/support_test databases and ports18111/18121 used.
+- Frontend TypeScript check and production build passed.
+- Headless Playwright mobile sign-in/queue test: 1 passed, 3.8s.
+  This uses a separate automated browser; user's live browser was not controlled.
+- Three new independent probes: 3 failed, 13.14s, reproducing findings 1–3.
+- No paid model calls, live CRM reads, Docker execution or public deployment.
+- Existing demo was not reset or stopped by this review. Isolated test data changed.
+- A first browser attempt could not find the browser inside the restricted runtime;
+  the targeted mobile check subsequently passed using the normal installed browser.
+  Full desktop repair browser test was not independently rerun.
+
+1. P1 — CANCELLED QUEUED INVESTIGATION RESTARTS
+Source: apps/api/recovery_api/investigate.py:run_investigation (around569),
+_persist_conclusion (around298), and routes.py:cancel.
+Reproduction: create another investigation; cancel before processing its queued
+job; process jobs. Expected incident OPEN with cancelled run; observed incident
+AWAITING_APPROVAL. run_investigation only skips COMPLETED, then overwrites CANCELLED
+with RUNNING. _persist_conclusion does not revalidate cancellation/active run under
+a lock before creating another open proposal. That new proposal can become eligible
+for approval because the cancelled run remains the active investigation.
+Fix: validate run lifecycle/incident active run at job start AND before persistence;
+make cancel/supersede durable and race-safe. Cancel or invalidate pending jobs, but
+do not rely only on queue cancellation because a worker may already be executing.
+Test cancellation before job start and during tool/model execution; test an old
+queued investigation completing after a newer run. Assert no fresh actionable
+proposal is published and no cancelled run becomes RUNNING/AWAITING_APPROVAL.
+
+2. P2 — RETRIEVED RUNBOOK CONTENT STILL NOT SENT TO MODEL
+Source: apps/api/recovery_api/agent.py:scoped_observation (around35);
+investigate.py:_apply_tool search_runbooks branch.
+Customer record evidence now reaches the model, which fixes the original major
+defect. However search_runbooks produces runbook_text and evidence IDs, while
+scoped_observation sends only IDs. A probe with a harmless reconnect instruction
+confirmed that none of its text is visible to the model. The model cannot learn
+the actual operating procedure from this tool.
+Fix: send bounded sanitized retrieved documents with IDs, titles, versions and
+content, marked untrusted. Preserve tool/write restrictions instead of deleting
+all content. Implement validated query/limit arguments if adaptive search is claimed.
+Test real retrieved text in the exact provider payload, malicious text treated as
+data, valid citations, and retrieval relevance.
+
+3. P2 — BUDGET CHECKS CAN BE BYPASSED BY THE FINAL RESPONSE
+Source: apps/api/recovery_api/agent.py:run_model_loop (around107–165),
+llm.py:OpenAICompatibleCompleter, routes.py:investigate budget construction.
+Checks happen before a provider call. The code aggregates returned usage and can
+immediately accept a diagnosis without checking usage/time again. Probe: max_tokens
+10, a final diagnosis reporting10000tokens; returned model success, no budget error.
+The same applies to final-call elapsed time/cost. No provider output-token ceiling
+is sent. Cost enforcement is disabled after a provider omits price, without a
+configured conservative estimate. The route also hardcodes a0.05budget overriding
+the configured cost setting. These are soft accounting checks, not a hard spend cap.
+Fix: validate positive budgets; honor configured ceilings; recheck usage/time after
+every call and before acceptance; bound response tokens and remaining HTTP timeout
+where supported. Estimate cost using explicit model rates or label cost unknown and
+require a bounded explicit policy. Do not imply rejecting a result refunds usage
+already consumed. Test final-call overrun and unknown/invalid/negative usage values.
+
+4. P2 — LIVE EVALUATION EXECUTION IS STILL NOT WIRED
+Source: evaluations/run_baseline.py and evaluations/runners.py:live_status (216).
+The single-pass/tool-agent contract runners now genuinely execute with fake
+completers, which is useful. But CIR_EVAL_LIVE=1 plus credentials only changes
+live_status to configured. The main runner always scores weak_contract_completer
+and weak_tool_completer; it never constructs the live adapter or evaluates it.
+This is an implementation gap beyond simply missing credentials.
+Fix: add an explicit opt-in live command constructing the configured provider and
+running both approaches on a bounded selected split. No automatic paid calls.
+Test wiring with an injected provider, then run actual evaluations only after Vinay
+authorizes provider credentials/budget. Label live/fake outputs accurately.
+Also tool_agent currently receives the full case observation before requesting
+tools, and every tool returns the full observation. This cannot establish that
+adaptive evidence collection helps. Use tool-specific observations from a hidden
+case environment with the same repair policy and clearly documented evidence
+availability for both approaches.
+
+OPEN VALIDATION GATES (NOT NEW CODE FAILURES)
+- Actual live model quality and real external CRM behavior remain unverified.
+- Docker clean-volume boot/login/full repair and Linux CI have not been observed.
+  Source fixes are promising but source inspection is not runtime validation.
+- Container CI currently probes API readiness only; add web/proxy/auth/repair smoke
+  and isolated browser coverage to verify the original packaging failure stays fixed.
+- Practitioner feedback, meaningful real-world benefit and public hosting pending.
+- Simulator accounts remain shared fixed IDs; docs correctly disclose that the
+  application workspace isolation does not establish simulator-side tenant isolation.
+
+REGRESSION FILE
+tests/integration/test_independent_review_round2.py contains three intentionally
+failing assertions describing required behavior. Do not delete/weaken them just to
+make the suite green; fix the lifecycle, evidence exposure and budget behavior.
+The runbook assertion can be adapted to a structured-document output while retaining
+the actual test requirement that safe runbook content reaches the provider.
+
+HANDOFF TO CURSOR
+Fix findings1–4 and add the missing race/live-wiring tests. Keep paid/live operations
+opt-in. Rerun the complete suite INCLUDING the independent review probes, frontend
+build and isolated browser workflow. Update docs/VALIDATION.md with exact commands,
+results and remaining live/container/practitioner gates. Preserve existing demo
+processes/data and the separate ResolveDesk project. Report what remains blocked.

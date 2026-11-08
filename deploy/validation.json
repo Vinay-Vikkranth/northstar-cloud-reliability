@@ -1,0 +1,42 @@
+{
+  "verified_date": "2026-11-08",
+  "environment": "Windows, Python 3.12.9",
+  "release_tests": {
+    "command": "python -B -m unittest discover -s tests/unit -p test_release.py -v",
+    "passed": 12,
+    "failed": 0,
+    "elapsed_seconds": 1.194,
+    "scope": "Real filesystem state, checksums, private environment generation, mutation locks and config assertions. Container failure/recovery uses an explicit fake subprocess runner."
+  },
+  "production_compose": {
+    "validator": "Official Docker Compose v5.7.0 standalone",
+    "command": "docker-compose --env-file <isolated private fixture> -f compose.production.yaml config --quiet",
+    "exit_code": 0,
+    "official_binary_sha256": "f5dc759702aec5c0602e247aa861d14853216e3f481c4eaaf83621a035ecf92f"
+  },
+  "cloud_resources_created": false,
+  "container_boot_performed_locally": false,
+  "public_tls_or_provider_deployment_verified": false,
+  "file_sha256": {
+    "scripts/release.py": "b54507e131afcffac39901d9efb0c1ef2391e404ae682786fa4fcb256db6faf2",
+    "tests/unit/test_release.py": "b4141b2efc4f94c36c388d056dcd3549242b751f000a9b8601cfbb9080f01c3c",
+    "compose.production.yaml": "b761d709b828bb2d1aa7bd47ee8ec2b3b144555ff72441028c8de2ea589c9d23",
+    "Dockerfile.production": "c1cf400c1f68ebdbc5a0c2ca86215401f30449e768080f7fc5f5ff720f227ff0",
+    "deploy/Caddyfile": "4c18f2602620bfa83dfbf375d9c51bbeaa5e72c4ad59df2c4b99e2269b67288d",
+    "deploy/bootstrap_db.py": "a87307b4e611e98f1ef321fe27fb9f24e231c1af715e43414d7bfa51ac831dfc",
+    "deploy/seed_once.py": "9d8c2a986468f571465484cb32b14e80f31e4b0b72f3fcb925d9c2efc703fa45",
+    "deploy/smoke.py": "1105124c4f4a1bc969041ad127e7cb5fc66e29e71dd71a565ec4cffbceec5b83"
+  },
+  "limits": [
+    "The standalone validator does not prove image build or container startup.",
+    "Artifact pointer rollback is not a cloud deployment.",
+    "Real Docker deployment and automatic recovery commands are implemented, but only their explicit fake-runner failure path was exercised locally.",
+    "No database downgrade or data restore is claimed."
+  ],
+  "production_smoke": {
+    "script": "deploy/smoke.py",
+    "syntax_validated": true,
+    "runtime_status": "pending actual container CI execution",
+    "scope": "Isolated production Compose fixture; no public TLS or provider validation"
+  }
+}

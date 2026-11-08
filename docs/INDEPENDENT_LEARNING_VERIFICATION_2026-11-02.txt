@@ -1,0 +1,32 @@
+VERIFICATION AND LEARNING SETUP — November 2, 2026
+
+Before small frontend/bootstrap fixes, full unit/integration suite:67passed,
+3deprecation warnings,61.42s. Logging regression passes; API is build2026.11.02.4.
+Frontend TypeScript/build passed before and after display fix (final921ms).
+
+New full headless browser walkthrough on separate fictional records:
+- Missing update: investigate -> evidence -> separate approver -> VERIFIED/RESOLVED.
+- Healthy account: no_mismatch, no repair.
+- Unknown source plan: mapping_mismatch, no repair.
+First run caught a real UI crash: API limitations is a string but frontend called
+.join() as if an array. Fixed App.tsx type/rendering; rerun on new fictional records
+passed all3cases in one test (13.1s) with no browser/page errors.
+
+Added prepare_learning_workspace.py to create isolated sample accounts without
+overwriting existing rows, and an opt-in learning-verification.spec.ts browser test.
+Vinay Practice contains3untouched scenarios for the user's hands-on test.
+No existingdemo reset or processstop performed. Headless browser is separate from
+the user's browser. Verification screenshots under var/learning-verification/.
+
+Also prevented startup seed.py from automatically resetting shared simulator
+records. Default seed now preserves them; --reset-demo explicitly invokes old reset.
+Observed seed exit0 and exact equality of practice account before/after seed.
+README updated to remove obsolete25pass/1fail claims and explain current gates.
+
+STILL NOT COMPLETE LIVE INTEGRATION
+Read-only check confirmed installed Ollama still fails WinError1392;11434closed.
+No.env present; HubSpot settings absent. User confirms HubSpot account/key not yet
+created and requests guidance. No paid/model/cloud/CRM calls were made.
+Docker/LinuxCI/practitioner/publichosting remain unverified.
+
+Use docs/HANDS_ON_TEST.txt for step-by-step practice and explanations.

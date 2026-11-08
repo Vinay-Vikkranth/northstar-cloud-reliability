@@ -1,0 +1,14 @@
+.venv
+.env
+.env.*
+!.env.example
+.pytest_cache
+tests
+docs
+evidence/private
+var
+apps/web/node_modules
+apps/web/dist
+**/__pycache__
+.git
+*.log

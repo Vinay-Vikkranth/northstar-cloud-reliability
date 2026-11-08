@@ -1,0 +1,94 @@
+HISTORICAL SOURCE DOCUMENT: copied from the earlier local Northstar project. Its former machine settings, live-account setup and evidence do not apply to a fresh clone of this release. Use README.md and docs/VALIDATION_2026-11-08.md for current setup, measured results and limitations. No old private account identifiers or credentials are supplied.
+
+VINAY'S HANDS-ON WALKTHROUGH
+Updated November 4, 2026. Current mode: live local AI (Ollama llama3:latest).
+HubSpot + Local AI uses a real free test contact and a local support destination.
+Vinay Practice uses fictional CRM/support records with the same live local model.
+
+SEE THE COMPLETED REAL INTEGRATION FIRST
+Sign in as northstar.operator, choose HubSpot + Local AI, open Alex Recovery Demo.
+This case is already RESOLVED. Its original evidence says CRM Premium / support
+Basic. Verification confirms the approved change to Premium with exactly one
+local support write. HubSpot was only read. Do not reinvestigate this completed
+case to reproduce a mismatch; use the fresh practice cases below.
+
+OPEN AND SIGN IN
+1. Open http://127.0.0.1:8100/ while this local app is running.
+2. Open var/local-credentials.txt privately for the local passwords. Do not paste
+   or screenshot that file into a chat.
+3. Sign in with northstar.operator and its matching password.
+4. In the Workspace dropdown choose Vinay Practice.
+Three untouched fictional cases were prepared for you. Do not click Demo controls
+or Reset demo workspace: those controls reset shared simulator records.
+
+CASE 1 — A REAL MISMATCH IN FICTIONAL DATA
+Open Alex Practice. The CRM source is premium; support is basic.
+Before Investigate, the page may say it has not captured both records yet.
+Click Investigate and wait for the background worker and local model.
+Expect cause missing_update and next step propose_repair.
+Read the two original records, then the proposed before basic / after premium.
+This is a proposal, not an applied update. An operator cannot approve it.
+
+Sign out. Sign in as northstar.approver with its matching password.
+Choose Vinay Practice again and open Alex Practice.
+Review the account and exact plan change; optionally edit the approval reason.
+Click Approve repair once. Wait for all three messages:
+- Repair accepted: yes
+- Repair verified: yes
+- Incident resolved: yes
+The stored investigation snapshot can still show basic: it records what was wrong
+BEFORE the repair. Verification is a fresh check AFTER it. Those are different times.
+The investigation checkpoint can show AWAITING_APPROVAL historically; the actual
+repair state VERIFIED and incident RESOLVED are the completion indicators.
+
+CASE 2 — NOTHING SHOULD CHANGE
+Sign back in as northstar.operator, choose Vinay Practice, open Jordan Healthy.
+Click Investigate. Both plans are premium.
+Expect cause no_mismatch and no proposed write. A good system does not change a
+healthy account simply because somebody clicked Investigate.
+
+CASE 3 — DO NOT GUESS
+Open Casey Unknown Plan and click Investigate.
+CRM contains gold, which is not an approved mapped plan. Support contains basic.
+Expect mapping_mismatch, correct_mapping and NEEDS_INFORMATION, with no repair.
+Someone must define an approved mapping and investigate again. The system must
+not guess that gold means enterprise or premium.
+
+WHAT EACH COMPONENT DOES
+Browser: shows incidents/evidence and accepts a human decision.
+FastAPI: authenticates the user, enforces permissions and creates the work.
+Worker/LangGraph: performs the multi-step investigation in the background.
+CRM service: holds the authoritative subscription plan.
+Support service: holds the account that may need correcting.
+PostgreSQL: stores observations, proposal, approval, repair intent and audit.
+Executor: rechecks freshness/approval, sends a conditional idempotent update.
+Verifier: re-reads records to decide whether the repair actually worked.
+Local AI: receives required account evidence, may request additional read tools,
+and proposes an explanation. Deterministic policy controls whether a repair is
+allowed; the model cannot authorize or choose the final write value.
+The local model can make mistakes. If it fails or reaches a budget limit, the
+system escalates without proposing a repair. A successful demo does not prove
+general model reliability. Read the observations and approval carefully.
+
+WHY HUMAN APPROVAL MATTERS
+An AI answer is not permission to change an account. The approved proposal fixes
+the exact account, field, value and observed versions. If data changes before the
+write, stale checks should reject it. Retrying uses the same operation identity
+so a lost response does not cause another mutation.
+
+GET ANOTHER FRESH PRACTICE SET
+From the project folder, run:
+.\.venv\Scripts\python.exe scripts\prepare_learning_workspace.py --slug practice2 --name "Practice 2"
+Then sign out/in and select Practice 2. Choose a new slug/name for another fresh
+set. Reusing the same slug preserves existing cases; it does not reset them.
+
+IF THE SITE IS NOT AVAILABLE AFTER RESTARTING YOUR COMPUTER
+Launch the installed Ollama app. From this project folder run:
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts\start.ps1
+Then open http://127.0.0.1:8100/ (Northstar uses 8100, not 8000).
+To check without changing data:
+.\.venv\Scripts\python.exe scripts\check_setup.py
+If start says a port is in use, check the running site before starting again.
+The local app and model must remain running. No paid account or API key is needed
+for local inference; the approved read-only HubSpot key is already saved privately.
+HubSpot test accounts may expire after inactivity; reconnect if that happens.

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="530" viewBox="0 0 1160 530">
+<defs><marker id="arrow" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto"><path d="M0 0 L10 4 L0 8" fill="#76bfc2"/></marker></defs>
+<rect width="1160" height="530" rx="18" fill="#12212e"/><g font-family="Segoe UI,Arial,sans-serif">
+<text x="35" y="44" fill="white" font-size="26" font-weight="600">Northstar • durable recovery, observable boundaries</text>
+<text x="35" y="73" fill="#b4c9d4" font-size="14">Fictional customer operations · real PostgreSQL and HTTP services · no autonomous external writes</text>
+<g stroke="#345365" stroke-width="1.5" fill="#1b3444">
+<rect x="35" y="117" width="230" height="108" rx="12"/><rect x="345" y="117" width="230" height="108" rx="12"/><rect x="655" y="117" width="230" height="108" rx="12"/>
+<rect x="345" y="310" width="230" height="112" rx="12"/><rect x="655" y="310" width="230" height="112" rx="12"/><rect x="955" y="117" width="170" height="305" rx="12"/>
+</g>
+<g fill="#eaf1f5" font-size="18" font-weight="600"><text x="55" y="150">React workspace</text><text x="365" y="150">FastAPI + policy</text><text x="675" y="150">Fenced worker</text><text x="365" y="345">PostgreSQL</text><text x="675" y="345">Connector boundary</text><text x="975" y="151">Observability</text></g>
+<g fill="#b4c9d4" font-size="14"><text x="55" y="177">Operator + separate approver</text><text x="55" y="199">Incidents · Operations · audit</text><text x="365" y="177">Auth · CSRF · tenant scope</text><text x="365" y="199">Approval bound to revisions</text><text x="675" y="177">SKIP LOCKED + lease UUID</text><text x="675" y="199">Heartbeat · bounded retries</text><text x="365" y="372">Durable jobs + trace carrier</text><text x="365" y="394">Approvals · immutable audit</text><text x="675" y="372">CRM read only</text><text x="675" y="394">Support: conditional + receipt</text><text x="975" y="191">W3C trace context</text><text x="975" y="222">Correlated JSON logs</text><text x="975" y="253">OTLP export optional</text><text x="975" y="284">Queue + SLO alerts</text><text x="975" y="315">Measured benchmarks</text><text x="975" y="346">Release + rollback</text></g>
+<g stroke="#76bfc2" stroke-width="2" fill="none" marker-end="url(#arrow)"><path d="M265 171 H338"/><path d="M460 225 V303"/><path d="M575 365 H610 V171 H648"/><path d="M770 225 V303"/><path d="M885 171 H948"/><path d="M885 365 H948"/></g>
+<rect x="35" y="460" width="1090" height="43" rx="9" fill="#273b45"/><text x="55" y="487" fill="#eac88b" font-size="14">One side effect is enforced at the destination. Queue processing is at least once; a stale worker cannot commit an old lease.</text>
+</g></svg>

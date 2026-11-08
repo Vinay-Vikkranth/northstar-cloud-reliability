@@ -1,0 +1,115 @@
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "127.0.0.1:55432:5432"
+    volumes:
+      - cir_pg:/var/lib/postgresql/data
+      - ./scripts/postgres-init.sql:/docker-entrypoint-initdb.d/01-roles.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+  crm:
+    build: .
+    command: ["python", "-m", "uvicorn", "crm_simulator.app:app", "--host", "0.0.0.0", "--port", "8111"]
+    environment:
+      CRM_DATABASE_URL: postgresql+psycopg://crm_app:crm_app_local@postgres:5432/crm
+      CRM_READ_TOKEN: crm-read-local
+      CRM_ADMIN_TOKEN: crm-admin-local
+    ports:
+      - "127.0.0.1:8111:8111"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8111/health/ready')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+  support:
+    build: .
+    command: ["python", "-m", "uvicorn", "support_service.app:app", "--host", "0.0.0.0", "--port", "8121"]
+    environment:
+      SUPPORT_DATABASE_URL: postgresql+psycopg://support_app:support_app_local@postgres:5432/support
+      SUPPORT_TOKEN: support-local
+      SUPPORT_ADMIN_TOKEN: support-admin-local
+    ports:
+      - "127.0.0.1:8121:8121"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8121/health/ready')"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
+  api:
+    build: .
+    command: ["sh", "-c", "python -m alembic upgrade head && python scripts/apply_grants.py && python scripts/setup_checkpoints.py && python -m uvicorn recovery_api.main:app --host 0.0.0.0 --port 8101"]
+    environment:
+      CIR_DATABASE_URL: postgresql+psycopg://cir_app:cir_app_local@postgres:5432/cir
+      CIR_MIGRATION_DATABASE_URL: postgresql+psycopg://cir_owner:cir_owner_local@postgres:5432/cir
+      CIR_CRM_BASE_URL: http://crm:8111
+      CIR_SUPPORT_BASE_URL: http://support:8121
+      CIR_CORS_ORIGINS: http://127.0.0.1:8100,http://localhost:8100
+      CIR_INVESTIGATOR_MODE: deterministic
+    ports:
+      - "127.0.0.1:8101:8101"
+    depends_on:
+      crm:
+        condition: service_healthy
+      support:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8101/health/ready')"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 25s
+  worker:
+    build: .
+    command: ["python", "-m", "recovery_worker.main"]
+    environment:
+      CIR_DATABASE_URL: postgresql+psycopg://cir_app:cir_app_local@postgres:5432/cir
+      CIR_MIGRATION_DATABASE_URL: postgresql+psycopg://cir_owner:cir_owner_local@postgres:5432/cir
+      CIR_CRM_BASE_URL: http://crm:8111
+      CIR_SUPPORT_BASE_URL: http://support:8121
+      CIR_INVESTIGATOR_MODE: deterministic
+    depends_on:
+      api:
+        condition: service_healthy
+  bootstrap:
+    build: .
+    command: ["python", "scripts/seed.py"]
+    environment:
+      CIR_DATABASE_URL: postgresql+psycopg://cir_app:cir_app_local@postgres:5432/cir
+      CIR_MIGRATION_DATABASE_URL: postgresql+psycopg://cir_owner:cir_owner_local@postgres:5432/cir
+      CIR_CRM_BASE_URL: http://crm:8111
+      CIR_SUPPORT_BASE_URL: http://support:8121
+    depends_on:
+      api:
+        condition: service_healthy
+      crm:
+        condition: service_healthy
+      support:
+        condition: service_healthy
+    restart: "no"
+  web:
+    build: ./apps/web
+    environment:
+      CIR_API_PROXY: http://api:8101
+    ports:
+      - "127.0.0.1:8100:8100"
+    depends_on:
+      api:
+        condition: service_healthy
+volumes:
+  cir_pg:

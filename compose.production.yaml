@@ -1,0 +1,164 @@
+name: northstar-cloud
+
+x-runtime: &runtime
+  image: ${NORTHSTAR_IMAGE:?Generate the private deployment environment first}
+  build:
+    context: .
+    dockerfile: Dockerfile.production
+  restart: unless-stopped
+  init: true
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  networks: [private]
+  volumes: [runtime:/app/var]
+
+x-app-env: &app-env
+  CIR_ENVIRONMENT: production
+  CIR_COOKIE_SECURE: "true"
+  CIR_DATABASE_URL: ${CIR_DATABASE_URL:?Required}
+  CIR_CRM_BASE_URL: http://crm:8111
+  CIR_SUPPORT_BASE_URL: http://support:8121
+  CIR_CORS_ORIGINS: https://${NORTHSTAR_DOMAIN:?Required}
+  CIR_INVESTIGATOR_MODE: deterministic
+  CRM_READ_TOKEN: ${CRM_READ_TOKEN:?Required}
+  CRM_ADMIN_TOKEN: ${CRM_ADMIN_TOKEN:?Required}
+  SUPPORT_TOKEN: ${SUPPORT_TOKEN:?Required}
+  SUPPORT_ADMIN_TOKEN: ${SUPPORT_ADMIN_TOKEN:?Required}
+  CIR_WEBHOOK_SECRET: ${CIR_WEBHOOK_SECRET:?Required}
+  CIR_TRACE_PATH: /app/var/traces/api.jsonl
+  CIR_LOG_DIR: /app/var/logs/api
+
+services:
+  postgres:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Required}
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    volumes: [postgres:/var/lib/postgresql/data]
+    networks: [private]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  db-init:
+    <<: *runtime
+    restart: "no"
+    command: [python, deploy/bootstrap_db.py]
+    environment:
+      CIR_ADMIN_URL: ${CIR_ADMIN_URL:?Required}
+      CIR_OWNER_PASSWORD: ${CIR_OWNER_PASSWORD:?Required}
+      CIR_APP_PASSWORD: ${CIR_APP_PASSWORD:?Required}
+      CRM_DB_PASSWORD: ${CRM_DB_PASSWORD:?Required}
+      SUPPORT_DB_PASSWORD: ${SUPPORT_DB_PASSWORD:?Required}
+    depends_on:
+      postgres: {condition: service_healthy}
+
+  migrate:
+    <<: *runtime
+    restart: "no"
+    command: [sh, -ec, "python -m alembic upgrade head && python scripts/apply_grants.py && python scripts/setup_checkpoints.py"]
+    environment:
+      <<: *app-env
+      CIR_MIGRATION_DATABASE_URL: ${CIR_MIGRATION_DATABASE_URL:?Required}
+    depends_on:
+      db-init: {condition: service_completed_successfully}
+
+  crm:
+    <<: *runtime
+    command: [python, -m, uvicorn, crm_simulator.app:app, --host, 0.0.0.0, --port, "8111"]
+    environment:
+      CRM_DATABASE_URL: ${CRM_DATABASE_URL:?Required}
+      CRM_READ_TOKEN: ${CRM_READ_TOKEN:?Required}
+      CRM_ADMIN_TOKEN: ${CRM_ADMIN_TOKEN:?Required}
+      CIR_WEBHOOK_SECRET: ${CIR_WEBHOOK_SECRET:?Required}
+      CIR_EVENT_URL: http://api:8101/api/v1/events/crm-simulator
+      CIR_TRACE_PATH: /app/var/traces/crm.jsonl
+      CIR_LOG_DIR: /app/var/logs/crm
+      OTEL_SERVICE_NAME: northstar-crm-simulator
+    depends_on:
+      db-init: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8111/health/ready', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 30
+
+  support:
+    <<: *runtime
+    command: [python, -m, uvicorn, support_service.app:app, --host, 0.0.0.0, --port, "8121"]
+    environment:
+      SUPPORT_DATABASE_URL: ${SUPPORT_DATABASE_URL:?Required}
+      SUPPORT_TOKEN: ${SUPPORT_TOKEN:?Required}
+      SUPPORT_ADMIN_TOKEN: ${SUPPORT_ADMIN_TOKEN:?Required}
+      CIR_TRACE_PATH: /app/var/traces/support.jsonl
+      CIR_LOG_DIR: /app/var/logs/support
+      OTEL_SERVICE_NAME: northstar-support-simulator
+    depends_on:
+      db-init: {condition: service_completed_successfully}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8121/health/ready', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 30
+
+  api:
+    <<: *runtime
+    environment: *app-env
+    depends_on:
+      migrate: {condition: service_completed_successfully}
+      crm: {condition: service_healthy}
+      support: {condition: service_healthy}
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8101/health/ready', timeout=3)"]
+      interval: 5s
+      timeout: 4s
+      retries: 30
+
+  seed:
+    <<: *runtime
+    restart: "no"
+    command: [python, deploy/seed_once.py]
+    environment: *app-env
+    depends_on:
+      api: {condition: service_healthy}
+
+  worker:
+    <<: *runtime
+    command: [python, -m, recovery_worker.main]
+    environment:
+      <<: *app-env
+      CIR_TRACE_PATH: /app/var/traces/worker.jsonl
+      CIR_LOG_DIR: /app/var/logs/worker
+      OTEL_SERVICE_NAME: northstar-worker
+    depends_on:
+      seed: {condition: service_completed_successfully}
+
+  edge:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports: ["80:80", "443:443", "443:443/udp"]
+    environment:
+      NORTHSTAR_DOMAIN: ${NORTHSTAR_DOMAIN:?Required}
+      ACME_EMAIL: ${ACME_EMAIL:?Required}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks: [edge, private]
+    depends_on:
+      api: {condition: service_healthy}
+
+networks:
+  private: {internal: true}
+  edge: {}
+volumes:
+  postgres: {}
+  runtime: {}
+  caddy_data: {}
+  caddy_config: {}

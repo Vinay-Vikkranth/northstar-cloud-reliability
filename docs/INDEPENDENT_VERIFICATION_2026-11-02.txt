@@ -1,0 +1,39 @@
+INDEPENDENT VERIFICATION AFTER COST-POLICY FIX
+November 2, 2026. Review only; application code not changed.
+
+Observed independently:
+- Full isolated unit/integration suite:66passed,3deprecationwarnings,59.40seconds.
+- Includes previous independent round2 probes and cost-policy regression tests.
+- Frontend TypeScript/Vite production build passed,1.31seconds.
+- API readiness:HTTP200,build2026.11.02.3.
+- Worker startup log identifies build2026.11.02.3.
+- Web,CRM simulator and support-service endpoints returnedHTTP200.
+- Separate headless mobile browser sign-in/queue test:1passed,5.9seconds.
+- Existing demo not reset, processes not stopped, no live model/CRM/paid calls.
+
+Cost compatibility finding is addressed in tested code:
+strict stops on missing provider cost;local_unmeasured completes multiple fake-
+provider steps and records money as null/unmeasured;estimated uses configured
+rates and labels the result an estimate. Token/time/tool controls remain. Both
+application and live-evaluation wiring use these policies.
+
+Minor remaining cleanup:
+worker.err contains a logging-format exception. RedactingFilter in
+apps/api/recovery_api/telemetry.py converts numeric logging arguments to strings,
+breaking third-party percent-d format placeholders (observed httpx status200).
+Preserve numeric argument types or render the formatted message safely before
+redaction, then set args appropriately. Test a numeric-format log record and
+secret redaction. This is an observability defect, not evidence the repair failed.
+
+Boundaries:
+Latest full desktop repair browser workflow was reported by Cursor in
+docs/VALIDATION.md; this reviewer independently reran sign-in/queue only.
+Latest API identity and backend recovery suite independently verified.
+Live model quality, real HubSpot reads, Docker boot, Linux CI, practitioner
+validation and public hosting remain pending. Do not claim production customer
+impact or live-AI quality from synthetic/fake-provider test success.
+
+Conclusion: reviewed offline recovery prototype passes current automated checks;
+previous blocking cost issue resolved. Next useful milestone is actual authorized
+model/test-CRM validation, plus the small logging cleanup, rather than more broad
+architecture rewriting.

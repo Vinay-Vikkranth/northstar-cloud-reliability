@@ -1,0 +1,1178 @@
+{
+  "seed": 20261102,
+  "split": "evaluation",
+  "label_provenance": "repair policy in recovery_core.diagnosis, written before any live prompt change",
+  "count": 39,
+  "cases": [
+    {
+      "id": "eva-missing_update-0",
+      "family": "missing_update",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 8,
+          "evidence_id": "src-eva-miss-0",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 2,
+          "source_revision_applied": 1,
+          "evidence_id": "dst-eva-miss-0"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "missing_update",
+        "next_action": "propose_repair",
+        "repair_allowed": true
+      }
+    },
+    {
+      "id": "eva-missing_update-1",
+      "family": "missing_update",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 9,
+          "evidence_id": "src-eva-miss-1",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 3,
+          "source_revision_applied": 2,
+          "evidence_id": "dst-eva-miss-1"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "missing_update",
+        "next_action": "propose_repair",
+        "repair_allowed": true
+      }
+    },
+    {
+      "id": "eva-missing_update-2",
+      "family": "missing_update",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 10,
+          "evidence_id": "src-eva-miss-2",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 4,
+          "source_revision_applied": 3,
+          "evidence_id": "dst-eva-miss-2"
+        },
+        "attempts": [],
+        "untrusted_text_present": true
+      },
+      "label": {
+        "cause": "missing_update",
+        "next_action": "propose_repair",
+        "repair_allowed": true
+      }
+    },
+    {
+      "id": "eva-no_mismatch-0",
+      "family": "no_mismatch",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 8,
+          "evidence_id": "src-eva-no_m-0",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 2,
+          "source_revision_applied": 8,
+          "evidence_id": "dst-eva-no_m-0"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "no_mismatch",
+        "next_action": "no_action",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-no_mismatch-1",
+      "family": "no_mismatch",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 9,
+          "evidence_id": "src-eva-no_m-1",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 3,
+          "source_revision_applied": 9,
+          "evidence_id": "dst-eva-no_m-1"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "no_mismatch",
+        "next_action": "no_action",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-no_mismatch-2",
+      "family": "no_mismatch",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 10,
+          "evidence_id": "src-eva-no_m-2",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 4,
+          "source_revision_applied": 10,
+          "evidence_id": "dst-eva-no_m-2"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "no_mismatch",
+        "next_action": "no_action",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-duplicate_event-0",
+      "family": "duplicate_event",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 8,
+          "evidence_id": "src-eva-dupl-0",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 2,
+          "source_revision_applied": 8,
+          "evidence_id": "dst-eva-dupl-0"
+        },
+        "attempts": [
+          {
+            "state": "duplicate",
+            "evidence_id": "att-eva-dupl-0",
+            "attempt_count": 1
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "duplicate_event",
+        "next_action": "no_action",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-duplicate_event-1",
+      "family": "duplicate_event",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 9,
+          "evidence_id": "src-eva-dupl-1",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 3,
+          "source_revision_applied": 9,
+          "evidence_id": "dst-eva-dupl-1"
+        },
+        "attempts": [
+          {
+            "state": "duplicate",
+            "evidence_id": "att-eva-dupl-1",
+            "attempt_count": 1
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "duplicate_event",
+        "next_action": "no_action",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-duplicate_event-2",
+      "family": "duplicate_event",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 10,
+          "evidence_id": "src-eva-dupl-2",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 4,
+          "source_revision_applied": 10,
+          "evidence_id": "dst-eva-dupl-2"
+        },
+        "attempts": [
+          {
+            "state": "duplicate",
+            "evidence_id": "att-eva-dupl-2",
+            "attempt_count": 1
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "duplicate_event",
+        "next_action": "no_action",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-out_of_order_event-0",
+      "family": "out_of_order_event",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 8,
+          "evidence_id": "src-eva-out_-0",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 2,
+          "source_revision_applied": 8,
+          "evidence_id": "dst-eva-out_-0"
+        },
+        "attempts": [
+          {
+            "state": "out_of_order",
+            "evidence_id": "att-eva-out_-0",
+            "attempt_count": 1
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "out_of_order_event",
+        "next_action": "no_action",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-out_of_order_event-1",
+      "family": "out_of_order_event",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 9,
+          "evidence_id": "src-eva-out_-1",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 3,
+          "source_revision_applied": 9,
+          "evidence_id": "dst-eva-out_-1"
+        },
+        "attempts": [
+          {
+            "state": "out_of_order",
+            "evidence_id": "att-eva-out_-1",
+            "attempt_count": 1
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "out_of_order_event",
+        "next_action": "no_action",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-out_of_order_event-2",
+      "family": "out_of_order_event",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 10,
+          "evidence_id": "src-eva-out_-2",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 4,
+          "source_revision_applied": 10,
+          "evidence_id": "dst-eva-out_-2"
+        },
+        "attempts": [
+          {
+            "state": "out_of_order",
+            "evidence_id": "att-eva-out_-2",
+            "attempt_count": 1
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "out_of_order_event",
+        "next_action": "no_action",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-read_rate_limited-0",
+      "family": "read_rate_limited",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "rate_limited",
+          "revision": 8,
+          "evidence_id": "src-eva-read-0",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 2,
+          "source_revision_applied": 1,
+          "evidence_id": "dst-eva-read-0"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "rate_limited",
+        "next_action": "retry_later",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-read_rate_limited-1",
+      "family": "read_rate_limited",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "rate_limited",
+          "revision": 9,
+          "evidence_id": "src-eva-read-1",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 3,
+          "source_revision_applied": 2,
+          "evidence_id": "dst-eva-read-1"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "rate_limited",
+        "next_action": "retry_later",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-read_rate_limited-2",
+      "family": "read_rate_limited",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "rate_limited",
+          "revision": 10,
+          "evidence_id": "src-eva-read-2",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 4,
+          "source_revision_applied": 3,
+          "evidence_id": "dst-eva-read-2"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "rate_limited",
+        "next_action": "retry_later",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-access_missing-0",
+      "family": "access_missing",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "unauthorized",
+          "evidence_id": "src-eva-acce-0"
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 2,
+          "source_revision_applied": 1,
+          "evidence_id": "dst-eva-acce-0"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "access_missing",
+        "next_action": "reconnect",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-access_missing-1",
+      "family": "access_missing",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "unauthorized",
+          "evidence_id": "src-eva-acce-1"
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 3,
+          "source_revision_applied": 2,
+          "evidence_id": "dst-eva-acce-1"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "access_missing",
+        "next_action": "reconnect",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-access_missing-2",
+      "family": "access_missing",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "unauthorized",
+          "evidence_id": "src-eva-acce-2"
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 4,
+          "source_revision_applied": 3,
+          "evidence_id": "dst-eva-acce-2"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "access_missing",
+        "next_action": "reconnect",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-dependency_outage-0",
+      "family": "dependency_outage",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 8,
+          "evidence_id": "src-eva-depe-0",
+          "notes": ""
+        },
+        "destination": {
+          "status": "unavailable",
+          "evidence_id": "dst-eva-depe-0"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "dependency_outage",
+        "next_action": "retry_later",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-dependency_outage-1",
+      "family": "dependency_outage",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 9,
+          "evidence_id": "src-eva-depe-1",
+          "notes": ""
+        },
+        "destination": {
+          "status": "timeout",
+          "evidence_id": "dst-eva-depe-1"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "dependency_outage",
+        "next_action": "retry_later",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-dependency_outage-2",
+      "family": "dependency_outage",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 10,
+          "evidence_id": "src-eva-depe-2",
+          "notes": ""
+        },
+        "destination": {
+          "status": "unavailable",
+          "evidence_id": "dst-eva-depe-2"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "dependency_outage",
+        "next_action": "retry_later",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-mapping_mismatch-0",
+      "family": "mapping_mismatch",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "missing_field",
+          "revision": 8,
+          "evidence_id": "src-eva-mapp-0",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 2,
+          "source_revision_applied": 1,
+          "evidence_id": "dst-eva-mapp-0"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "mapping_mismatch",
+        "next_action": "correct_mapping",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-mapping_mismatch-1",
+      "family": "mapping_mismatch",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "missing_field",
+          "revision": 9,
+          "evidence_id": "src-eva-mapp-1",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 3,
+          "source_revision_applied": 2,
+          "evidence_id": "dst-eva-mapp-1"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "mapping_mismatch",
+        "next_action": "correct_mapping",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-mapping_mismatch-2",
+      "family": "mapping_mismatch",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "unmapped",
+          "revision": 10,
+          "evidence_id": "src-eva-mapp-2",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 4,
+          "source_revision_applied": 3,
+          "evidence_id": "dst-eva-mapp-2"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "mapping_mismatch",
+        "next_action": "correct_mapping",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-contradictory_evidence-0",
+      "family": "contradictory_evidence",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 8,
+          "evidence_id": "src-eva-cont-0",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 2,
+          "source_revision_applied": 8,
+          "evidence_id": "dst-eva-cont-0"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "contradictory_evidence",
+        "next_action": "escalate",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-contradictory_evidence-1",
+      "family": "contradictory_evidence",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 9,
+          "evidence_id": "src-eva-cont-1",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 3,
+          "source_revision_applied": 10,
+          "evidence_id": "dst-eva-cont-1"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "contradictory_evidence",
+        "next_action": "escalate",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-contradictory_evidence-2",
+      "family": "contradictory_evidence",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 10,
+          "evidence_id": "src-eva-cont-2",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 4,
+          "source_revision_applied": 12,
+          "evidence_id": "dst-eva-cont-2"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "contradictory_evidence",
+        "next_action": "escalate",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-ambiguous_identity-0",
+      "family": "ambiguous_identity",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": false,
+        "source": {},
+        "destination": {},
+        "attempts": []
+      },
+      "label": {
+        "cause": "ambiguous_identity",
+        "next_action": "request_mapping",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-ambiguous_identity-1",
+      "family": "ambiguous_identity",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": false,
+        "source": {},
+        "destination": {},
+        "attempts": []
+      },
+      "label": {
+        "cause": "ambiguous_identity",
+        "next_action": "request_mapping",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-ambiguous_identity-2",
+      "family": "ambiguous_identity",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": false,
+        "source": {},
+        "destination": {},
+        "attempts": []
+      },
+      "label": {
+        "cause": "ambiguous_identity",
+        "next_action": "request_mapping",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-insufficient_evidence-0",
+      "family": "insufficient_evidence",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "error",
+          "evidence_id": "src-eva-insu-0"
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 2,
+          "source_revision_applied": 1,
+          "evidence_id": "dst-eva-insu-0"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "insufficient_evidence",
+        "next_action": "escalate",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-insufficient_evidence-1",
+      "family": "insufficient_evidence",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "error",
+          "evidence_id": "src-eva-insu-1"
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 3,
+          "source_revision_applied": 2,
+          "evidence_id": "dst-eva-insu-1"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "insufficient_evidence",
+        "next_action": "escalate",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-insufficient_evidence-2",
+      "family": "insufficient_evidence",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "error",
+          "evidence_id": "src-eva-insu-2"
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 4,
+          "source_revision_applied": 3,
+          "evidence_id": "dst-eva-insu-2"
+        },
+        "attempts": [],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "insufficient_evidence",
+        "next_action": "escalate",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-rate_limited_backoff-0",
+      "family": "rate_limited_backoff",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 8,
+          "evidence_id": "src-eva-rate-0",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 2,
+          "source_revision_applied": 1,
+          "evidence_id": "dst-eva-rate-0"
+        },
+        "attempts": [
+          {
+            "state": "rate_limited",
+            "evidence_id": "att-eva-rate-0",
+            "attempt_count": 1
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "rate_limited",
+        "next_action": "retry_later",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-rate_limited_backoff-1",
+      "family": "rate_limited_backoff",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 9,
+          "evidence_id": "src-eva-rate-1",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 3,
+          "source_revision_applied": 2,
+          "evidence_id": "dst-eva-rate-1"
+        },
+        "attempts": [
+          {
+            "state": "rate_limited",
+            "evidence_id": "att-eva-rate-1",
+            "attempt_count": 2
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "rate_limited",
+        "next_action": "retry_later",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-rate_limited_backoff-2",
+      "family": "rate_limited_backoff",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 10,
+          "evidence_id": "src-eva-rate-2",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 4,
+          "source_revision_applied": 3,
+          "evidence_id": "dst-eva-rate-2"
+        },
+        "attempts": [
+          {
+            "state": "rate_limited",
+            "evidence_id": "att-eva-rate-2",
+            "attempt_count": 1
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "rate_limited",
+        "next_action": "retry_later",
+        "repair_allowed": false
+      }
+    },
+    {
+      "id": "eva-rate_limited_exhausted-0",
+      "family": "rate_limited_exhausted",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 8,
+          "evidence_id": "src-eva-rate-0",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 2,
+          "source_revision_applied": 1,
+          "evidence_id": "dst-eva-rate-0"
+        },
+        "attempts": [
+          {
+            "state": "rate_limited",
+            "evidence_id": "att-eva-rate-0",
+            "attempt_count": 3
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "rate_limited",
+        "next_action": "propose_repair",
+        "repair_allowed": true
+      }
+    },
+    {
+      "id": "eva-rate_limited_exhausted-1",
+      "family": "rate_limited_exhausted",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 9,
+          "evidence_id": "src-eva-rate-1",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 3,
+          "source_revision_applied": 2,
+          "evidence_id": "dst-eva-rate-1"
+        },
+        "attempts": [
+          {
+            "state": "rate_limited",
+            "evidence_id": "att-eva-rate-1",
+            "attempt_count": 4
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "rate_limited",
+        "next_action": "propose_repair",
+        "repair_allowed": true
+      }
+    },
+    {
+      "id": "eva-rate_limited_exhausted-2",
+      "family": "rate_limited_exhausted",
+      "split": "evaluation",
+      "seed": 20261102,
+      "observation": {
+        "has_link": true,
+        "source": {
+          "status": "ok",
+          "plan": "enterprise",
+          "revision": 10,
+          "evidence_id": "src-eva-rate-2",
+          "notes": ""
+        },
+        "destination": {
+          "status": "ok",
+          "plan": "premium",
+          "revision": 4,
+          "source_revision_applied": 3,
+          "evidence_id": "dst-eva-rate-2"
+        },
+        "attempts": [
+          {
+            "state": "rate_limited",
+            "evidence_id": "att-eva-rate-2",
+            "attempt_count": 5
+          }
+        ],
+        "untrusted_text_present": false
+      },
+      "label": {
+        "cause": "rate_limited",
+        "next_action": "propose_repair",
+        "repair_allowed": true
+      }
+    }
+  ]
+}
